@@ -8,16 +8,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Custom CSS for Modern, Visually Attractive Styling
+# 2. Custom CSS for Modern Styling
 st.markdown("""
     <style>
-    /* Main Theme Variables */
-    :root {
-        --primary-red: #D9381E;
-        --dark-navy: #1E293B;
-        --light-bg: #F8FAFC;
-    }
-    
     /* Global styles */
     .stApp {
         background-color: #F8FAFC;
@@ -44,22 +37,7 @@ st.markdown("""
         font-size: 1rem;
     }
 
-    /* Domain Card Container */
-    .domain-box {
-        background: white;
-        border-radius: 10px;
-        padding: 16px;
-        border-top: 5px solid #CBD5E1;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        margin-bottom: 15px;
-    }
-    .domain-1 { border-top-color: #EF4444; }
-    .domain-2 { border-top-color: #0EA5E9; }
-    .domain-3 { border-top-color: #EAB308; }
-    .domain-4 { border-top-color: #DC2626; }
-    .domain-5 { border-top-color: #22C55E; }
-
-    /* Custom Metric Cards */
+    /* Metric Cards */
     .metric-card {
         background: white;
         padding: 16px;
@@ -80,12 +58,11 @@ st.markdown("""
         margin-top: 4px;
     }
     </style>
-""", unsafe_allow_html=unsafe_allow_html)
+""", unsafe_allow_html=True)
 
 # 3. Data Structure Definitions
 DOMAINS = {
     "1. Policy & Regulatory Support": {
-        "color": "domain-1",
         "projects": {
             "PS1": "Policy and regulatory review",
             "PS2": "Technical standards and regulation",
@@ -94,7 +71,6 @@ DOMAINS = {
         }
     },
     "2. Organizational Support": {
-        "color": "domain-2",
         "projects": {
             "OS1": "Business goals and use cases",
             "OS2": "Organizational KPIs",
@@ -103,7 +79,6 @@ DOMAINS = {
         }
     },
     "3. Infrastructure": {
-        "color": "domain-3",
         "projects": {
             "IF1": "Smart meters: commercial and industrial",
             "IF2": "Asset management design and implementation (GIS)",
@@ -114,7 +89,6 @@ DOMAINS = {
         }
     },
     "4. Technology": {
-        "color": "domain-4",
         "projects": {
             "TE1": "Technology evaluation and selection",
             "TE2": "Integrated solution selection",
@@ -126,7 +100,6 @@ DOMAINS = {
         }
     },
     "5. Customer Engagement & Environment": {
-        "color": "domain-5",
         "projects": {
             "C1": "Green DISCO",
             "C2": "AMI lessons learned",
@@ -146,8 +119,7 @@ def select_project(code):
 
 # 5. Navigation Sidebar
 with st.sidebar:
-    st.image("https://img.icons8.com/color/96/electricity.png", width=60)
-    st.title("EEHC Navigation")
+    st.title("⚡ EEHC Navigation")
     st.markdown("**Egyptian Electricity Holding Company**\n9 Distribution Companies (DISCOs)")
     st.divider()
     
@@ -159,7 +131,6 @@ with st.sidebar:
     for domain_name, domain_info in DOMAINS.items():
         with st.expander(domain_name, expanded=False):
             for code, name in domain_info["projects"].items():
-                is_selected = st.session_state.selected_project == code
                 btn_label = f"🟢 {code}: {name}" if code == "IF2" else f"{code}: {name}"
                 if st.button(btn_label, key=f"side_{code}", use_container_width=True):
                     select_project(code)
@@ -168,7 +139,6 @@ with st.sidebar:
 # 6. Main Dashboard View
 if st.session_state.selected_project == "Dashboard Home":
     
-    # Header Banner
     st.markdown("""
         <div class="main-header">
             <h1>Smart Grid Roadmap</h1>
@@ -176,7 +146,6 @@ if st.session_state.selected_project == "Dashboard Home":
         </div>
     """, unsafe_allow_html=True)
 
-    # Top Level Interactive Grid (5 Domains)
     cols = st.columns(5)
     
     for i, (domain_name, domain_data) in enumerate(DOMAINS.items()):
@@ -185,21 +154,18 @@ if st.session_state.selected_project == "Dashboard Home":
             st.caption(f"{len(domain_data['projects'])} Projects")
             
             for code, title in domain_data["projects"].items():
-                # Highlight active GIS project specially
                 if code == "IF2":
                     st.info(f"**{code}**\n{title}")
                     if st.button(f"Open {code} →", key=f"dash_{code}", use_container_width=True, type="primary"):
                         select_project(code)
                         st.rerun()
                 else:
-                    with st.container():
-                        if st.button(f"**{code}**\n{title[:28]}...", key=f"dash_{code}", use_container_width=True, help=title):
-                            select_project(code)
-                            st.rerun()
+                    if st.button(f"**{code}**\n{title[:26]}...", key=f"dash_{code}", use_container_width=True, help=title):
+                        select_project(code)
+                        st.rerun()
 
     st.divider()
 
-    # Bottom Portfolio Benefits Section
     st.subheader("Potential Benefits of the Smart-Grid Portfolio")
     
     b_cols = st.columns(3)
@@ -222,7 +188,7 @@ if st.session_state.selected_project == "Dashboard Home":
         * **B9:** EV integration benefits[cite: 1]
         """)
 
-# 7. GIS Project Deep-Dive Page (IF2: Asset Management Design & Implementation)
+# 7. GIS Project Page (IF2: Asset Management Design & Implementation)
 elif st.session_state.selected_project == "IF2":
     
     st.button("← Back to Smart Grid Roadmap", on_click=select_project, args=("Dashboard Home",))
@@ -230,7 +196,6 @@ elif st.session_state.selected_project == "IF2":
     st.title("🗺️ IF2: Asset Management Design & Implementation (GIS Rollout)")
     st.caption("Strategic Roadmap & Operational Implementation for EEHC and 9 Distribution Companies")
     
-    # Overview Metrics
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         st.markdown('<div class="metric-card"><div class="metric-title">Coverage Target</div><div class="metric-value">100% MV Network</div></div>', unsafe_allow_html=True)
@@ -243,7 +208,6 @@ elif st.session_state.selected_project == "IF2":
 
     st.divider()
 
-    # Detailed Tabs based on PPT slides
     tab1, tab2, tab3, tab4 = st.tabs(["🚀 Implementation Roadmap", "🏛️ Delivery & Architecture", "🗺️ Horizon Timeline", "📊 Monitoring & Outcomes"])
 
     with tab1:
@@ -290,12 +254,11 @@ elif st.session_state.selected_project == "IF2":
         `1. Capture (Field Change)` ➔ `2. Verify (DISCO Lead)` ➔ `3. Approve (QA Checklist)` ➔ `4. Publish (SQL/GIS Dashboard)`[cite: 1]
         """)
 
-# 8. Dynamic Generic View for Other Projects
+# 8. Dynamic View for Other Projects
 else:
     st.button("← Back to Smart Grid Roadmap", on_click=select_project, args=("Dashboard Home",))
     
     code = st.session_state.selected_project
-    # Search project title
     project_title = "Selected Project"
     for d in DOMAINS.values():
         if code in d["projects"]:
